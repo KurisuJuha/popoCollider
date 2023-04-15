@@ -16,8 +16,7 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
         {
             colliders.Add(boxCollider);
             if (boxCollider.check) checkColliders.Add(boxCollider);
-            var positions = boxCollider.gridPositions;
-            foreach (var position in positions)
+            foreach (var position in boxCollider.gridPositions)
             {
                 if (!collidersMap.ContainsKey(position))
                 {
@@ -32,8 +31,7 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
         {
             colliders.Remove(boxCollider);
             if (boxCollider.check) checkColliders.Remove(boxCollider);
-            var positions = boxCollider.gridPositions;
-            foreach (var position in positions)
+            foreach (var position in boxCollider.gridPositions)
             {
                 if (!collidersMap.ContainsKey(position))
                 {
