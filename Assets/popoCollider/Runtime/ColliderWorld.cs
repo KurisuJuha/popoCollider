@@ -51,7 +51,7 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
                 checkAllRets.Add((collider, Check(collider)));
             }
 
-            return checkAllRets;
+            return new(checkAllRets);
         }
 
         public List<BoxCollider> Check(BoxCollider boxCollider)
