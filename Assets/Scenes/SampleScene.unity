@@ -336,3 +336,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   count: 0
+  staticObjectsCount: 0
+  dynamicObjectsCount: 0
+  auto: 1

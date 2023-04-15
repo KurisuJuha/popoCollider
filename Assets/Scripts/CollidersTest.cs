@@ -11,6 +11,9 @@ public class CollidersTest : MonoBehaviour
     public List<(PopoCollider collider, List<PopoCollider> otherColliders)> checkedColliders;
     private ColliderWorld world = new();
     [SerializeField] private int count;
+    [SerializeField] private int staticObjectsCount;
+    [SerializeField] private int dynamicObjectsCount;
+    [SerializeField] private bool auto;
 
     private void Update()
     {
@@ -29,6 +32,8 @@ public class CollidersTest : MonoBehaviour
             );
             colliders.Add(collider);
             world.AddCollider(collider);
+            staticObjectsCount++;
+            count++;
         }
         if (Input.GetKey(KeyCode.Z))
         {
@@ -45,9 +50,28 @@ public class CollidersTest : MonoBehaviour
             );
             colliders.Add(collider);
             world.AddCollider(collider);
+            dynamicObjectsCount++;
+            count++;
+        }
+        if (auto && Time.deltaTime < 1f / 60f)
+        {
+            PopoCollider collider = new PopoCollider(
+                new FixVector2(
+                    new(Random.Range(-10, 10)),
+                    new(Random.Range(-10, 10))
+                ),
+                new FixVector2(
+                    new(1),
+                    new(1)
+                ),
+                true
+            );
+            colliders.Add(collider);
+            world.AddCollider(collider);
+            dynamicObjectsCount++;
+            count++;
         }
 
         checkedColliders = world.CheckAll();
-        count = world?.colliders.Count ?? 0;
     }
 }
