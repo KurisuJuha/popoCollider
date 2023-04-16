@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using JuhaKurisu.PopoTools.Deterministics;
 
 namespace JuhaKurisu.PopoTools.ColliderSystem
@@ -11,7 +10,7 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
         public readonly FixVector2 size;
         public readonly FixVector2 halfSize;
         public readonly FixVector2 leftDownPosition;
-        public readonly ReadOnlyCollection<(long, long)> gridPositions;
+        public readonly List<int> quadTreePosition;
 
         public BoxCollider(FixVector2 position, FixVector2 size, bool check = false)
         {
@@ -20,22 +19,26 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
             this.halfSize = size / new Fix64(2);
             this.check = check;
             leftDownPosition = position - size / new Fix64(2);
-            gridPositions = new(GetGridPositions());
+            quadTreePosition = new();
         }
 
-        private (long, long)[] GetGridPositions()
+        private void CalculateQuadTreePosition()
         {
-            List<(long, long)> rets = new();
-
-            for (int y = 0; y < (long)size.y; y++)
+            quadTreePosition.Clear();
+            while (true)
             {
-                for (int x = 0; x < (long)size.x; x++)
-                {
-                    rets.Add((x + ((long)leftDownPosition.x), y + (long)leftDownPosition.y));
-                }
-            }
 
-            return rets.ToArray();
+            }
+        }
+
+        public void AddToNode(ColliderNode root)
+        {
+
+        }
+
+        public void RemoveFromNode(ColliderNode root)
+        {
+
         }
 
         public bool Detect(BoxCollider otherCollider)
