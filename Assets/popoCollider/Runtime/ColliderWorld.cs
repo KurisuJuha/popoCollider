@@ -14,7 +14,8 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
 
         public void AddCollider(BoxCollider boxCollider)
         {
-            colliders.Add(boxCollider);
+            // 失敗したら既に存在するオブジェクトのためreturn
+            if (!colliders.Add(boxCollider)) return;
             if (boxCollider.check) checkColliders.Add(boxCollider);
             foreach (var position in boxCollider.gridPositions)
             {
@@ -29,7 +30,8 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
 
         public void RemoveCollider(BoxCollider boxCollider)
         {
-            colliders.Remove(boxCollider);
+            // 失敗したらそもそも存在しないオブジェクトのためreturn
+            if (!colliders.Remove(boxCollider)) return;
             if (boxCollider.check) checkColliders.Remove(boxCollider);
             foreach (var position in boxCollider.gridPositions)
             {
