@@ -15,7 +15,10 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
         public void AddCollider(RectCollider<T> boxCollider)
         {
             // 失敗したら既に存在するオブジェクトのためreturn
-            if (!colliders.Add(boxCollider)) return;
+            if (!colliders.Add(boxCollider))
+            {
+                return;
+            }
             if (boxCollider.check) checkColliders.Add(boxCollider);
             foreach (var position in boxCollider.gridPositions)
             {
@@ -75,6 +78,9 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
                 {
                     // 既にチェックしてあるなら次へ
                     if (checkedColliders.Contains(otherCollider)) continue;
+
+                    // 自分自身なら次へ
+                    if (otherCollider == boxCollider) continue;
 
                     //当たってるなら返り値に登録
                     if (boxCollider.Detect(otherCollider))

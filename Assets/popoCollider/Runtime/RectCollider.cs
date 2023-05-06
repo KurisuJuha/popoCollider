@@ -25,8 +25,8 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
 
         public bool Detect(RectCollider<T> otherCollider)
         {
-            if (position.x - otherCollider.position.x < halfSize.x + otherCollider.halfSize.x &&
-                position.y - otherCollider.position.y < halfSize.y + otherCollider.halfSize.y)
+            if (Fix64.Abs(position.x - otherCollider.position.x) < halfSize.x + otherCollider.halfSize.x &&
+                Fix64.Abs(position.y - otherCollider.position.y) < halfSize.y + otherCollider.halfSize.y)
                 return true;
 
             return false;
@@ -34,35 +34,36 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
 
         public void ChangeData(FixVector2 position, FixVector2 size, T obj, bool check = false)
         {
+            bool b = isRegistered;
+            if (b) world.RemoveCollider(this);
+
             this.position = position;
             this.size = size;
             this.obj = obj;
-            this.halfSize = size / two;
             this.check = check;
-            leftDownPosition = position - size / two;
-            gridPositions = new(GetGridPositions());
+            this.halfSize = size / two;
+            this.leftDownPosition = position - halfSize;
+            this.gridPositions = new ReadOnlyCollection<(long, long)>(GetGridPositions());
 
-            // もし登録済みで変更されてる場合登録解除後もう一度登録
-            if (isRegistered)
-            {
-                world.RemoveCollider(this);
-                world.AddCollider(this);
-            }
+            if (b) world.AddCollider(this);
         }
 
         private (long, long)[] GetGridPositions()
         {
-            List<(long, long)> rets = new();
+            long height = (long)Fix64.Ceiling(size.y) + 1;
+            long width = (long)Fix64.Ceiling(size.x) + 1;
+            (long, long)[] ret = new (long, long)[height * width];
 
-            for (int y = 0; y < (long)size.y; y++)
+            for (long y = 0; y < height; y++)
             {
-                for (int x = 0; x < (long)size.x; x++)
+                long _y = y * width;
+                for (long x = 0; x < width; x++)
                 {
-                    rets.Add((x + ((long)leftDownPosition.x), y + (long)leftDownPosition.y));
+                    ret[_y + x] = (x + Fix64.FloorToLong(leftDownPosition.x), y + Fix64.FloorToLong(leftDownPosition.y));
                 }
             }
 
-            return rets.ToArray();
+            return ret;
         }
     }
 }

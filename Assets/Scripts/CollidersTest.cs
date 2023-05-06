@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using AnnulusGames.LucidTools.Inspector;
 using JuhaKurisu.PopoTools.Deterministics;
 using JuhaKurisu.PopoTools.ColliderSystem;
 using PopoCollider = JuhaKurisu.PopoTools.ColliderSystem.RectCollider<int>;
@@ -17,64 +16,64 @@ public class CollidersTest : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKey(KeyCode.Space))
-        {
-            PopoCollider collider = new PopoCollider(
-                new FixVector2(
-                    new(Random.Range(-10, 10)),
-                    new(Random.Range(-10, 10))
-                ),
-                new FixVector2(
-                    new(1),
-                    new(1)
-                ),
-                10,
-                false
-            );
-            colliders.Add(collider);
-            world.AddCollider(collider);
-            staticObjectsCount++;
-            count++;
-        }
-        if (Input.GetKey(KeyCode.Z))
-        {
-            PopoCollider collider = new PopoCollider(
-                new FixVector2(
-                    new(Random.Range(-10, 10)),
-                    new(Random.Range(-10, 10))
-                ),
-                new FixVector2(
-                    new(1),
-                    new(1)
-                ),
-                10,
-                true
-            );
-            colliders.Add(collider);
-            world.AddCollider(collider);
-            dynamicObjectsCount++;
-            count++;
-        }
-        if (auto && Time.deltaTime < 1f / 60f)
-        {
-            PopoCollider collider = new PopoCollider(
-                new FixVector2(
-                    new(Random.Range(-10, 10)),
-                    new(Random.Range(-10, 10))
-                ),
-                new FixVector2(
-                    new(1),
-                    new(1)
-                ),
-                10,
-                true
-            );
-            colliders.Add(collider);
-            world.AddCollider(collider);
-            dynamicObjectsCount++;
-            count++;
-        }
+        // if (Input.GetKey(KeyCode.Space))
+        // {
+        //     PopoCollider collider = new PopoCollider(
+        //         new FixVector2(
+        //             new(Random.Range(-10, 10)),
+        //             new(Random.Range(-10, 10))
+        //         ),
+        //         new FixVector2(
+        //             new(1),
+        //             new(1)
+        //         ),
+        //         10,
+        //         false
+        //     );
+        //     colliders.Add(collider);
+        //     world.AddCollider(collider);
+        //     staticObjectsCount++;
+        //     count++;
+        // }
+        // if (Input.GetKey(KeyCode.Z))
+        // {
+        //     PopoCollider collider = new PopoCollider(
+        //         new FixVector2(
+        //             new(Random.Range(-10, 10)),
+        //             new(Random.Range(-10, 10))
+        //         ),
+        //         new FixVector2(
+        //             new(1),
+        //             new(1)
+        //         ),
+        //         10,
+        //         true
+        //     );
+        //     colliders.Add(collider);
+        //     world.AddCollider(collider);
+        //     dynamicObjectsCount++;
+        //     count++;
+        // }
+        // if (auto && Time.deltaTime < 1f / 60f)
+        // {
+        //     PopoCollider collider = new PopoCollider(
+        //         new FixVector2(
+        //             new(Random.Range(-10, 10)),
+        //             new(Random.Range(-10, 10))
+        //         ),
+        //         new FixVector2(
+        //             new(1),
+        //             new(1)
+        //         ),
+        //         10,
+        //         true
+        //     );
+        //     colliders.Add(collider);
+        //     world.AddCollider(collider);
+        //     dynamicObjectsCount++;
+        //     count++;
+        // }
 
-        checkedColliders = world.CheckAll();
+        // checkedColliders = world.CheckAll();
     }
 }
