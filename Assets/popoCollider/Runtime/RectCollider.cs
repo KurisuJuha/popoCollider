@@ -14,6 +14,7 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
         public ReadOnlyCollection<(long, long)> gridPositions { get; private set; }
         public T obj { get; private set; }
         public bool isRegistered { get; internal set; }
+        public ColliderWorld<T> world { get; internal set; }
 
         private static Fix64 two = new Fix64(2);
 
@@ -40,6 +41,13 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
             this.check = check;
             leftDownPosition = position - size / two;
             gridPositions = new(GetGridPositions());
+
+            // もし登録済みで変更されてる場合登録解除後もう一度登録
+            if (isRegistered)
+            {
+                world.RemoveCollider(this);
+                world.AddCollider(this);
+            }
         }
 
         private (long, long)[] GetGridPositions()

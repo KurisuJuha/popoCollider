@@ -27,6 +27,7 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
                 collidersMap[position].Add(boxCollider);
             }
             boxCollider.isRegistered = true;
+            boxCollider.world = this;
         }
 
         public void RemoveCollider(RectCollider<T> boxCollider)
