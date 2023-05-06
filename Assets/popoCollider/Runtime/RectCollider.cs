@@ -6,22 +6,39 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
 {
     public class RectCollider<T>
     {
-        public readonly bool check;
-        public readonly FixVector2 position;
-        public readonly FixVector2 size;
-        public readonly FixVector2 halfSize;
-        public readonly FixVector2 leftDownPosition;
-        public readonly ReadOnlyCollection<(long, long)> gridPositions;
-        public readonly T obj;
+        public bool check { get; private set; }
+        public FixVector2 position { get; private set; }
+        public FixVector2 size { get; private set; }
+        public FixVector2 halfSize { get; private set; }
+        public FixVector2 leftDownPosition { get; private set; }
+        public ReadOnlyCollection<(long, long)> gridPositions { get; private set; }
+        public T obj { get; private set; }
+        public bool isRegistered { get; internal set; }
+
+        private static Fix64 two = new Fix64(2);
 
         public RectCollider(FixVector2 position, FixVector2 size, T obj, bool check = false)
+        {
+            ChangeData(position, size, obj, check);
+        }
+
+        public bool Detect(RectCollider<T> otherCollider)
+        {
+            if (position.x - otherCollider.position.x < halfSize.x + otherCollider.halfSize.x &&
+                position.y - otherCollider.position.y < halfSize.y + otherCollider.halfSize.y)
+                return true;
+
+            return false;
+        }
+
+        public void ChangeData(FixVector2 position, FixVector2 size, T obj, bool check = false)
         {
             this.position = position;
             this.size = size;
             this.obj = obj;
-            this.halfSize = size / new Fix64(2);
+            this.halfSize = size / two;
             this.check = check;
-            leftDownPosition = position - size / new Fix64(2);
+            leftDownPosition = position - size / two;
             gridPositions = new(GetGridPositions());
         }
 
@@ -38,15 +55,6 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
             }
 
             return rets.ToArray();
-        }
-
-        public bool Detect(RectCollider<T> otherCollider)
-        {
-            if (position.x - otherCollider.position.x < halfSize.x + otherCollider.halfSize.x &&
-                position.y - otherCollider.position.y < halfSize.y + otherCollider.halfSize.y)
-                return true;
-
-            return false;
         }
     }
 }
