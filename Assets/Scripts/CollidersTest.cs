@@ -3,13 +3,13 @@ using UnityEngine;
 using AnnulusGames.LucidTools.Inspector;
 using JuhaKurisu.PopoTools.Deterministics;
 using JuhaKurisu.PopoTools.ColliderSystem;
-using PopoCollider = JuhaKurisu.PopoTools.ColliderSystem.BoxCollider;
+using PopoCollider = JuhaKurisu.PopoTools.ColliderSystem.RectCollider<int>;
 
 public class CollidersTest : MonoBehaviour
 {
     public List<PopoCollider> colliders = new();
     public List<(PopoCollider collider, List<PopoCollider> otherColliders)> checkedColliders;
-    private ColliderWorld world = new();
+    private ColliderWorld<int> world = new();
     [SerializeField] private int count;
     [SerializeField] private int staticObjectsCount;
     [SerializeField] private int dynamicObjectsCount;
@@ -28,6 +28,7 @@ public class CollidersTest : MonoBehaviour
                     new(1),
                     new(1)
                 ),
+                10,
                 false
             );
             colliders.Add(collider);
@@ -46,6 +47,7 @@ public class CollidersTest : MonoBehaviour
                     new(1),
                     new(1)
                 ),
+                10,
                 true
             );
             colliders.Add(collider);
@@ -64,6 +66,7 @@ public class CollidersTest : MonoBehaviour
                     new(1),
                     new(1)
                 ),
+                10,
                 true
             );
             colliders.Add(collider);

@@ -2,17 +2,17 @@ using System.Collections.Generic;
 
 namespace JuhaKurisu.PopoTools.ColliderSystem
 {
-    public class ColliderWorld
+    public class ColliderWorld<T>
     {
-        public HashSet<BoxCollider> checkColliders = new();
-        public HashSet<BoxCollider> colliders = new();
-        public Dictionary<(long, long), HashSet<BoxCollider>> collidersMap = new();
+        public HashSet<RectCollider<T>> checkColliders = new();
+        public HashSet<RectCollider<T>> colliders = new();
+        public Dictionary<(long, long), HashSet<RectCollider<T>>> collidersMap = new();
 
-        private List<BoxCollider> checkRets = new();
-        private List<(BoxCollider collider, List<BoxCollider>)> checkAllRets = new();
-        private HashSet<BoxCollider> checkedColliders = new();
+        private List<RectCollider<T>> checkRets = new();
+        private List<(RectCollider<T> collider, List<RectCollider<T>>)> checkAllRets = new();
+        private HashSet<RectCollider<T>> checkedColliders = new();
 
-        public void AddCollider(BoxCollider boxCollider)
+        public void AddCollider(RectCollider<T> boxCollider)
         {
             // 失敗したら既に存在するオブジェクトのためreturn
             if (!colliders.Add(boxCollider)) return;
@@ -28,7 +28,7 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
             }
         }
 
-        public void RemoveCollider(BoxCollider boxCollider)
+        public void RemoveCollider(RectCollider<T> boxCollider)
         {
             // 失敗したらそもそも存在しないオブジェクトのためreturn
             if (!colliders.Remove(boxCollider)) return;
@@ -44,7 +44,7 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
             }
         }
 
-        public List<(BoxCollider collider, List<BoxCollider> otherCollider)> CheckAll()
+        public List<(RectCollider<T> collider, List<RectCollider<T>> otherCollider)> CheckAll()
         {
             checkAllRets.Clear();
 
@@ -56,7 +56,7 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
             return new(checkAllRets);
         }
 
-        public List<BoxCollider> Check(BoxCollider boxCollider)
+        public List<RectCollider<T>> Check(RectCollider<T> boxCollider)
         {
             checkRets.Clear();
             checkedColliders.Clear();
