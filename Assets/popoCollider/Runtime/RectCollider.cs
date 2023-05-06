@@ -4,7 +4,7 @@ using JuhaKurisu.PopoTools.Deterministics;
 
 namespace JuhaKurisu.PopoTools.ColliderSystem
 {
-    public class BoxCollider
+    public class RectCollider<T>
     {
         public readonly bool check;
         public readonly FixVector2 position;
@@ -12,11 +12,13 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
         public readonly FixVector2 halfSize;
         public readonly FixVector2 leftDownPosition;
         public readonly ReadOnlyCollection<(long, long)> gridPositions;
+        public readonly T obj;
 
-        public BoxCollider(FixVector2 position, FixVector2 size, bool check = false)
+        public RectCollider(FixVector2 position, FixVector2 size, T obj, bool check = false)
         {
             this.position = position;
             this.size = size;
+            this.obj = obj;
             this.halfSize = size / new Fix64(2);
             this.check = check;
             leftDownPosition = position - size / new Fix64(2);
@@ -38,7 +40,7 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
             return rets.ToArray();
         }
 
-        public bool Detect(BoxCollider otherCollider)
+        public bool Detect(RectCollider<T> otherCollider)
         {
             if (position.x - otherCollider.position.x < halfSize.x + otherCollider.halfSize.x &&
                 position.y - otherCollider.position.y < halfSize.y + otherCollider.halfSize.y)
