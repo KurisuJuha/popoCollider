@@ -56,7 +56,9 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
 
             foreach (var collider in checkColliders)
             {
-                checkAllRets.Add((collider, Check(collider)));
+                var check = Check(collider);
+                if (check.Count == 0) continue;
+                checkAllRets.Add((collider, check));
             }
 
             return new(checkAllRets);
