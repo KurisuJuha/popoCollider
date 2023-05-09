@@ -113,10 +113,22 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
             return checkRets;
         }
 
+        public bool TryPointCast(FixVector2 position)
+            => PointCast(position).Count != 0;
+
+        public bool TryPointCast(FixVector2 position, out List<RectCollider<T>> value)
+        {
+            value = PointCast(position);
+            return value.Count != 0;
+        }
+
         public List<RectCollider<T>> RectCast(FixVector2 position, FixVector2 size)
             => Check(new RectCollider<T>(position, size, Fix64.zero, default, false));
 
-        public bool RectCast(FixVector2 position, FixVector2 size, out List<RectCollider<T>> value)
+        public bool TryRectCast(FixVector2 position, FixVector2 size)
+            => RectCast(position, size).Count != 0;
+
+        public bool TryRectCast(FixVector2 position, FixVector2 size, out List<RectCollider<T>> value)
         {
             value = RectCast(position, size);
             return value.Count != 0;
