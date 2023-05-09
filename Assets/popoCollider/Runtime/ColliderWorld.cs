@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using JuhaKurisu.PopoTools.Deterministics;
 
 namespace JuhaKurisu.PopoTools.ColliderSystem
 {
@@ -93,6 +94,15 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
             }
 
             return checkRets;
+        }
+
+        public List<RectCollider<T>> RayCast(FixVector2 position, FixVector2 size)
+            => Check(new RectCollider<T>(position, size, default, false));
+
+        public bool RayCast(FixVector2 position, FixVector2 size, out List<RectCollider<T>> value)
+        {
+            value = RayCast(position, size);
+            return value.Count != 0;
         }
     }
 }

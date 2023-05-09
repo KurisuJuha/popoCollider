@@ -48,15 +48,19 @@ public class RectColliderTest : MonoBehaviour
                 new Fix64((int)(square2.position.x * 1000)) / new Fix64(1000),
                 new Fix64((int)(square2.position.y * 1000)) / new Fix64(1000)
             ),
-            FixVector2.one,
+            FixVector2.one / new FixVector2(2, 2),
             square2,
             true
         );
         // Debug.Log(square1Collider.Detect(square2Collider));
 
-        foreach (var collider in world.CheckAll())
+        // foreach (var collider in world.CheckAll())
+        // {
+        //     Debug.Log($"{collider.collider.obj.transform.name} : {string.Join(" , ", collider.otherCollider.Select(o => o.obj.transform.name))}");
+        // }
+        foreach (var collider in world.Check(square1Collider))
         {
-            Debug.Log($"{collider.collider.obj.transform.name} : {string.Join(" , ", collider.otherCollider.Select(o => o.obj.transform.name))}");
+            Debug.Log($"{collider.obj.transform.name}");
         }
     }
 }
