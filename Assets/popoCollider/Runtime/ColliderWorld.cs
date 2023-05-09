@@ -97,7 +97,7 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
         }
 
         public List<RectCollider<T>> RayCast(FixVector2 position, FixVector2 size)
-            => Check(new RectCollider<T>(position, size, default, false));
+            => Check(new RectCollider<T>(position, size, Fix64.zero, default, false));
 
         public bool RayCast(FixVector2 position, FixVector2 size, out List<RectCollider<T>> value)
         {

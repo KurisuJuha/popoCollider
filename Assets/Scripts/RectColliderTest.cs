@@ -18,9 +18,9 @@ public class RectColliderTest : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        square1Collider = new RectCollider<Transform>(new(), FixVector2.one, square1, true);
-        square2Collider = new RectCollider<Transform>(new(), FixVector2.one, square2, true);
-        Debug.Log($"{square1Collider.leftDownPosition.x}, {square1Collider.leftDownPosition.y}");
+        square1Collider = new RectCollider<Transform>(new(), FixVector2.one, Fix64.zero, square1, true);
+        square2Collider = new RectCollider<Transform>(new(), FixVector2.one, Fix64.zero, square2, true);
+        // Debug.Log($"{square1Collider.leftDownPosition.x}, {square1Collider.leftDownPosition.y}");
         Debug.Log($"{square1Collider.size.x}, {square1Collider.size.y}");
         Debug.Log($"{square1Collider.position.x}, {square1Collider.position.y}");
         foreach (var pos in square1Collider.gridPositions)
@@ -40,6 +40,7 @@ public class RectColliderTest : MonoBehaviour
                 new Fix64((int)(square1.position.y * 1000)) / new Fix64(1000)
             ),
             FixVector2.one,
+            new Fix64((int)(square1.rotation.eulerAngles.z * 1000)) / new Fix64(1000),
             square1,
             true
         );
@@ -49,6 +50,7 @@ public class RectColliderTest : MonoBehaviour
                 new Fix64((int)(square2.position.y * 1000)) / new Fix64(1000)
             ),
             FixVector2.one / new FixVector2(2, 2),
+            new Fix64((int)(square2.rotation.eulerAngles.z * 1000)) / new Fix64(1000),
             square2,
             true
         );
