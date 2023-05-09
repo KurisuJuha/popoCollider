@@ -96,6 +96,23 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
             return checkRets;
         }
 
+        public List<RectCollider<T>> PointCast(FixVector2 position)
+        {
+            checkRets.Clear();
+
+            (long, long) pointGridPosition = (Fix64.FloorToLong(position.x), Fix64.FloorToLong(position.y));
+            if (!collidersMap.ContainsKey(pointGridPosition)) return checkRets;
+
+            foreach (var otherCollider in collidersMap[pointGridPosition])
+            {
+                // 当たっているなら返り値に登録
+                if (otherCollider.Detect(position))
+                    checkRets.Add(otherCollider);
+            }
+
+            return checkRets;
+        }
+
         public List<RectCollider<T>> RectCast(FixVector2 position, FixVector2 size)
             => Check(new RectCollider<T>(position, size, Fix64.zero, default, false));
 
