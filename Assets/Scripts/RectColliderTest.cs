@@ -56,13 +56,13 @@ public class RectColliderTest : MonoBehaviour
         );
         // Debug.Log(square1Collider.Detect(square2Collider));
 
-        // foreach (var collider in world.CheckAll())
-        // {
-        //     Debug.Log($"{collider.collider.obj.transform.name} : {string.Join(" , ", collider.otherCollider.Select(o => o.obj.transform.name))}");
-        // }
-        foreach (var collider in world.Check(square1Collider))
+        foreach (var collider in world.CheckAll())
         {
-            Debug.Log($"{collider.obj.transform.name}");
+            Debug.Log($"{collider.collider.obj.transform.name} : {string.Join(" , ", collider.otherCollider.Select(o => o.obj.transform.name))}");
         }
+        // foreach (var collider in world.Check(square1Collider))
+        // {
+        //     Debug.Log($"{collider.obj.transform.name}");
+        // }
     }
 }

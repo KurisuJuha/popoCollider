@@ -21,12 +21,16 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
 
         private static Fix64 two = new Fix64(2);
 
-        public RectCollider(FixVector2 position, FixVector2 size, Fix64 angle, T obj, bool check = false)
-        {
-            ChangeData(position, size, angle, obj, check);
-        }
+        public RectCollider(FixVector2 position, FixVector2 size, T obj = default, bool check = false)
+            => ChangeData(position, size, Fix64.zero, obj, check);
 
-        public void ChangeData(FixVector2 position, FixVector2 size, Fix64 angle, T obj, bool check = false)
+        public RectCollider(FixVector2 position, FixVector2 size, Fix64 angle, T obj = default, bool check = false)
+            => ChangeData(position, size, angle, obj, check);
+
+        public void ChangeData(FixVector2 position, FixVector2 size, T obj = default, bool check = false)
+            => ChangeData(pos1, size, Fix64.zero, obj, check);
+
+        public void ChangeData(FixVector2 position, FixVector2 size, Fix64 angle, T obj = default, bool check = false)
         {
             bool b = isRegistered;
             if (b) world.RemoveCollider(this);
