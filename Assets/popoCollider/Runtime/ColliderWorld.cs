@@ -96,12 +96,12 @@ namespace JuhaKurisu.PopoTools.ColliderSystem
             return checkRets;
         }
 
-        public List<RectCollider<T>> RayCast(FixVector2 position, FixVector2 size)
+        public List<RectCollider<T>> RectCast(FixVector2 position, FixVector2 size)
             => Check(new RectCollider<T>(position, size, Fix64.zero, default, false));
 
-        public bool RayCast(FixVector2 position, FixVector2 size, out List<RectCollider<T>> value)
+        public bool RectCast(FixVector2 position, FixVector2 size, out List<RectCollider<T>> value)
         {
-            value = RayCast(position, size);
+            value = RectCast(position, size);
             return value.Count != 0;
         }
     }
