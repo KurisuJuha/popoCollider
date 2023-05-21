@@ -1,0 +1,19 @@
+name: Nuget Exporter
+on: push
+jobs:
+  nugetpush:
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./
+    steps:
+      - uses: actions/checkout@main
+      - name: debug
+        run: ls
+      - name: restore
+        run: dotnet restore
+      - name: build nuget
+        run: dotnet pack -c Release
+      - name: push nuget
+        run: dotnet nuget push ./popoCollider/bin/Release/popoCollider.1.0.0.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
