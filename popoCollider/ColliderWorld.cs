@@ -1,137 +1,127 @@
-using System.Collections.Generic;
 using JuhaKurisu.PopoTools.Deterministics;
 
-namespace JuhaKurisu.PopoTools.ColliderSystem
+namespace JuhaKurisu.PopoTools.ColliderSystem;
+
+public class ColliderWorld<T>
 {
-    public class ColliderWorld<T>
+    private readonly List<(RectCollider<T> collider, IReadOnlyList<RectCollider<T>>)> _checkAllRets = new();
+    private readonly HashSet<RectCollider<T>> _checkedColliders = new();
+
+    private readonly List<RectCollider<T>> _checkRets = new();
+    public readonly HashSet<RectCollider<T>> CheckColliders = new();
+    public readonly HashSet<RectCollider<T>> Colliders = new();
+    public readonly Dictionary<(long, long), HashSet<RectCollider<T>>> CollidersMap = new();
+
+    public void AddCollider(RectCollider<T> boxCollider)
     {
-        public HashSet<RectCollider<T>> checkColliders = new();
-        public HashSet<RectCollider<T>> colliders = new();
-        public Dictionary<(long, long), HashSet<RectCollider<T>>> collidersMap = new();
-
-        private List<RectCollider<T>> checkRets = new();
-        private List<(RectCollider<T> collider, List<RectCollider<T>>)> checkAllRets = new();
-        private HashSet<RectCollider<T>> checkedColliders = new();
-
-        public void AddCollider(RectCollider<T> boxCollider)
+        // 失敗したら既に存在するオブジェクトのためreturn
+        if (!Colliders.Add(boxCollider)) return;
+        if (boxCollider.Check) CheckColliders.Add(boxCollider);
+        foreach (var position in boxCollider.GridPositions)
         {
-            // 失敗したら既に存在するオブジェクトのためreturn
-            if (!colliders.Add(boxCollider))
+            if (!CollidersMap.ContainsKey(position)) CollidersMap[position] = new HashSet<RectCollider<T>>();
+
+            CollidersMap[position].Add(boxCollider);
+        }
+
+        boxCollider.IsRegistered = true;
+        boxCollider.World = this;
+    }
+
+    public void RemoveCollider(RectCollider<T> boxCollider)
+    {
+        // 失敗したらそもそも存在しないオブジェクトのためreturn
+        if (!Colliders.Remove(boxCollider)) return;
+        if (boxCollider.Check) CheckColliders.Remove(boxCollider);
+        foreach (var position in boxCollider.GridPositions)
+        {
+            if (!CollidersMap.ContainsKey(position)) CollidersMap[position] = new HashSet<RectCollider<T>>();
+
+            CollidersMap[position].Remove(boxCollider);
+        }
+
+        boxCollider.IsRegistered = false;
+    }
+
+    public IReadOnlyList<(RectCollider<T> collider, IReadOnlyList<RectCollider<T>> otherCollider)> CheckAll()
+    {
+        _checkAllRets.Clear();
+
+        foreach (var collider in CheckColliders)
+        {
+            var check = Check(collider);
+            if (check.Count == 0) continue;
+            _checkAllRets.Add((collider, check));
+        }
+
+        return new List<(RectCollider<T> collider, IReadOnlyList<RectCollider<T>> otherCollider)>(_checkAllRets);
+    }
+
+    public IReadOnlyList<RectCollider<T>> Check(RectCollider<T> boxCollider)
+    {
+        _checkRets.Clear();
+        _checkedColliders.Clear();
+
+        foreach (var position in boxCollider.GridPositions)
+        {
+            // ないなら返す
+            if (!CollidersMap.ContainsKey(position))
+                return _checkRets;
+
+            // あるなら全て判定してcheckedCollidersに登録
+            foreach (var otherCollider in CollidersMap[position]
+                         .Where(otherCollider => !_checkedColliders.Contains(otherCollider))
+                         .Where(otherCollider => otherCollider != boxCollider))
             {
-                return;
+                //当たってるなら返り値に登録
+                if (boxCollider.Detect(otherCollider))
+                    _checkRets.Add(otherCollider);
+
+                _checkedColliders.Add(otherCollider);
             }
-            if (boxCollider.check) checkColliders.Add(boxCollider);
-            foreach (var position in boxCollider.gridPositions)
-            {
-                if (!collidersMap.ContainsKey(position))
-                {
-                    collidersMap[position] = new();
-                }
-
-                collidersMap[position].Add(boxCollider);
-            }
-            boxCollider.isRegistered = true;
-            boxCollider.world = this;
         }
 
-        public void RemoveCollider(RectCollider<T> boxCollider)
-        {
-            // 失敗したらそもそも存在しないオブジェクトのためreturn
-            if (!colliders.Remove(boxCollider)) return;
-            if (boxCollider.check) checkColliders.Remove(boxCollider);
-            foreach (var position in boxCollider.gridPositions)
-            {
-                if (!collidersMap.ContainsKey(position))
-                {
-                    collidersMap[position] = new();
-                }
+        return new List<RectCollider<T>>(_checkRets);
+    }
 
-                collidersMap[position].Remove(boxCollider);
-            }
-            boxCollider.isRegistered = false;
-        }
+    public List<RectCollider<T>> PointCast(FixVector2 position)
+    {
+        _checkRets.Clear();
 
-        public List<(RectCollider<T> collider, List<RectCollider<T>> otherCollider)> CheckAll()
-        {
-            checkAllRets.Clear();
+        var pointGridPosition = (Fix64.FloorToLong(position.x), Fix64.FloorToLong(position.y));
+        if (!CollidersMap.ContainsKey(pointGridPosition)) return _checkRets;
 
-            foreach (var collider in checkColliders)
-            {
-                var check = Check(collider);
-                if (check.Count == 0) continue;
-                checkAllRets.Add((collider, check));
-            }
+        foreach (var otherCollider in CollidersMap[pointGridPosition]
+                     .Where(otherCollider => otherCollider.Detect(position)))
+            _checkRets.Add(otherCollider);
 
-            return new(checkAllRets);
-        }
+        return new List<RectCollider<T>>(_checkRets);
+    }
 
-        public List<RectCollider<T>> Check(RectCollider<T> boxCollider)
-        {
-            checkRets.Clear();
-            checkedColliders.Clear();
+    public bool TryPointCast(FixVector2 position)
+    {
+        return PointCast(position).Count != 0;
+    }
 
-            foreach (var position in boxCollider.gridPositions)
-            {
-                // ないなら返す
-                if (!collidersMap.ContainsKey(position))
-                    return checkRets;
+    public bool TryPointCast(FixVector2 position, out List<RectCollider<T>> value)
+    {
+        value = PointCast(position);
+        return value.Count != 0;
+    }
 
-                // あるなら全て判定してcheckedCollidersに登録
-                foreach (var otherCollider in collidersMap[position])
-                {
-                    // 既にチェックしてあるなら次へ
-                    if (checkedColliders.Contains(otherCollider)) continue;
+    public IReadOnlyList<RectCollider<T>> RectCast(FixVector2 position, FixVector2 size)
+    {
+        return Check(new RectCollider<T>(position, size, Fix64.zero));
+    }
 
-                    // 自分自身なら次へ
-                    if (otherCollider == boxCollider) continue;
+    public bool TryRectCast(FixVector2 position, FixVector2 size)
+    {
+        return RectCast(position, size).Count != 0;
+    }
 
-                    //当たってるなら返り値に登録
-                    if (boxCollider.Detect(otherCollider))
-                        checkRets.Add(otherCollider);
-
-                    checkedColliders.Add(otherCollider);
-                }
-            }
-
-            return checkRets;
-        }
-
-        public List<RectCollider<T>> PointCast(FixVector2 position)
-        {
-            checkRets.Clear();
-
-            (long, long) pointGridPosition = (Fix64.FloorToLong(position.x), Fix64.FloorToLong(position.y));
-            if (!collidersMap.ContainsKey(pointGridPosition)) return checkRets;
-
-            foreach (var otherCollider in collidersMap[pointGridPosition])
-            {
-                // 当たっているなら返り値に登録
-                if (otherCollider.Detect(position))
-                    checkRets.Add(otherCollider);
-            }
-
-            return checkRets;
-        }
-
-        public bool TryPointCast(FixVector2 position)
-            => PointCast(position).Count != 0;
-
-        public bool TryPointCast(FixVector2 position, out List<RectCollider<T>> value)
-        {
-            value = PointCast(position);
-            return value.Count != 0;
-        }
-
-        public List<RectCollider<T>> RectCast(FixVector2 position, FixVector2 size)
-            => Check(new RectCollider<T>(position, size, Fix64.zero, default, false));
-
-        public bool TryRectCast(FixVector2 position, FixVector2 size)
-            => RectCast(position, size).Count != 0;
-
-        public bool TryRectCast(FixVector2 position, FixVector2 size, out List<RectCollider<T>> value)
-        {
-            value = RectCast(position, size);
-            return value.Count != 0;
-        }
+    public bool TryRectCast(FixVector2 position, FixVector2 size, out IReadOnlyList<RectCollider<T>> value)
+    {
+        value = RectCast(position, size);
+        return value.Count != 0;
     }
 }
