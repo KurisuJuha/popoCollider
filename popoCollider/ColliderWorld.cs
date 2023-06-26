@@ -65,8 +65,7 @@ public class ColliderWorld<T>
         foreach (var position in boxCollider.GridPositions)
         {
             // ないなら返す
-            if (!CollidersMap.ContainsKey(position))
-                return _checkRets;
+            if (!CollidersMap.ContainsKey(position)) continue;
 
             // あるなら全て判定してcheckedCollidersに登録
             foreach (var otherCollider in CollidersMap[position]
