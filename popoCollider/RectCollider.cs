@@ -30,7 +30,7 @@ public class RectCollider<T>
 
     public void ChangeData(FixVector2 position, FixVector2 size, T obj = default, bool check = false)
     {
-        ChangeData(Pos1, size, Fix64.zero, obj, check);
+        ChangeData(position, size, Fix64.zero, obj, check);
     }
 
     public void ChangeData(FixVector2 position, FixVector2 size, Fix64 angle, T obj = default, bool check = false)
