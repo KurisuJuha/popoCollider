@@ -4,7 +4,7 @@ Console.WriteLine(GetMortonNumber(3, 6));
 Console.WriteLine(GetRoot(31, 19));
 Console.WriteLine(GetStartIndex(2));
 
-var colliderWorld = new ColliderWorld<int>();
+var colliderWorld = new ColliderWorld<int>(3);
 
 uint BitSeparate32(uint n)
 {
