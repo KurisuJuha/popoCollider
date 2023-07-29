@@ -6,7 +6,7 @@ public class ColliderWorld<T>
 
     public ColliderWorld(ushort level)
     {
-        var length = (4 * (level + 1) - 1) / 3;
+        var length = ((int)Math.Pow(4, level + 1) - 1) / 3;
         _colliderCells = new ColliderCell<T>[length];
     }
 
