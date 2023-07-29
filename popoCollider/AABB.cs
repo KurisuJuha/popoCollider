@@ -6,8 +6,8 @@ namespace JuhaKurisu.PopoTools.ColliderSystem;
 
 public readonly struct AABB
 {
-    public readonly FixVector2 LeftUpPosition;
-    public readonly FixVector2 RightDownPosition;
+    public readonly FixVector2 LeftTopPosition;
+    public readonly FixVector2 RightBottomPosition;
 
     public AABB(RectColliderTransform transform)
     {
@@ -44,8 +44,8 @@ public readonly struct AABB
         if (rightDownPositionX < pos4.x) rightDownPositionX = pos4.x;
         if (rightDownPositionY > pos4.y) rightDownPositionY = pos4.y;
 
-        LeftUpPosition = new FixVector2(leftUpPositionX, leftUpPositionY);
-        RightDownPosition = new FixVector2(rightDownPositionX, rightDownPositionY);
+        LeftTopPosition = new FixVector2(leftUpPositionX, leftUpPositionY);
+        RightBottomPosition = new FixVector2(rightDownPositionX, rightDownPositionY);
     }
 
     private FixVector2 RotatePoint(FixVector2 vec, FixVector2 origin, Fix64 angle)
