@@ -1,6 +1,10 @@
-﻿Console.WriteLine(GetMortonNumber(3, 6));
+﻿using JuhaKurisu.PopoTools.ColliderSystem;
+
+Console.WriteLine(GetMortonNumber(3, 6));
 Console.WriteLine(GetRoot(31, 19));
 Console.WriteLine(GetStartIndex(2));
+
+var colliderWorld = new ColliderWorld<int>();
 
 uint BitSeparate32(uint n)
 {
