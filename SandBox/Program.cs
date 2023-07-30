@@ -1,10 +1,11 @@
 ﻿using JuhaKurisu.PopoTools.ColliderSystem;
+using JuhaKurisu.PopoTools.Deterministics;
 
 Console.WriteLine(GetMortonNumber(3, 6));
 Console.WriteLine(GetRoot(31, 19));
 Console.WriteLine(GetStartIndex(2));
 
-var colliderWorld = new ColliderWorld<int>(2);
+var colliderWorld = new ColliderWorld<int>(2, new WorldTransform(new FixVector2(0, 0), new FixVector2(10000, 10000)));
 
 uint BitSeparate32(uint n)
 {
