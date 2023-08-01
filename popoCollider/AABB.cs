@@ -48,6 +48,12 @@ public readonly struct AABB
         RightBottomPosition = new FixVector2(rightDownPositionX, rightDownPositionY);
     }
 
+    private AABB(FixVector2 leftTopPosition, FixVector2 rightBottomPosition)
+    {
+        LeftTopPosition = leftTopPosition;
+        RightBottomPosition = rightBottomPosition;
+    }
+
     private FixVector2 RotatePoint(FixVector2 vec, FixVector2 origin, Fix64 angle)
     {
         return RotatePoint(vec - origin, angle) + origin;
