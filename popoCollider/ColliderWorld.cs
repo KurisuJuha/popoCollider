@@ -2,21 +2,29 @@ namespace JuhaKurisu.PopoTools.ColliderSystem;
 
 public class ColliderWorld<T>
 {
+    private const ushort Level = 8;
     private readonly ColliderCell<T>[] _colliderCells;
-    private readonly WorldTransform _worldTransform;
+    public readonly WorldTransform WorldTransform;
 
-    public ColliderWorld(ushort level, WorldTransform transform)
+    public ColliderWorld(WorldTransform transform)
     {
-        var length = ((int)Math.Pow(4, level + 1) - 1) / 3;
+        var length = ((int)Math.Pow(4, Level + 1) - 1) / 3;
         _colliderCells = new ColliderCell<T>[length];
-        _worldTransform = transform;
+        WorldTransform = transform;
     }
 
-    public void Register(RectCollider<T> collider)
+    public void Remove(RectCollider<T> collider)
     {
+        _colliderCells[collider.index].Colliders?.Remove(collider);
     }
 
-    private void CreateNewCell()
+    public long Register(RectCollider<T> collider)
     {
+        var index = collider.index;
+        if (_colliderCells[index].Colliders is null) _colliderCells[index] = new ColliderCell<T>();
+
+        _colliderCells[index].Colliders?.Add(collider);
+
+        return index;
     }
 }
