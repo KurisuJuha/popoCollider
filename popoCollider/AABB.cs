@@ -70,4 +70,12 @@ public readonly struct AABB
             vec.x * sin + vec.y * cos
         );
     }
+
+    public AABB Rescale(WorldTransform worldTransform)
+    {
+        var defaultSize = new Fix64(8 * 8);
+        var scale = new FixVector2(worldTransform.Size.x / defaultSize, worldTransform.Size.y / defaultSize);
+        return new AABB(LeftTopPosition * scale + worldTransform.Position,
+            RightBottomPosition * scale + worldTransform.Position);
+    }
 }
