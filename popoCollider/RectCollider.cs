@@ -24,5 +24,10 @@ public readonly struct RectCollider<T>
         World.Remove(this);
     }
 
+    public void Register()
+    {
+        World.Register(this);
+    }
+
     }
 }
