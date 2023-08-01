@@ -2,7 +2,7 @@
 
 namespace JuhaKurisu.PopoTools.ColliderSystem;
 
-public struct RectCollider<T>
+public readonly struct RectCollider<T>
 {
     public readonly AABB AABB;
     public readonly T Entity;
