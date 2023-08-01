@@ -2,10 +2,10 @@
 
 public struct ColliderCell<T>
 {
-    public List<RectCollider<T>> Colliders;
+    public readonly HashSet<RectCollider<T>>? Colliders;
 
     public ColliderCell()
     {
-        Colliders = new List<RectCollider<T>>();
+        Colliders = new HashSet<RectCollider<T>>();
     }
 }
