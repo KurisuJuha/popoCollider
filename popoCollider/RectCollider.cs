@@ -18,5 +18,11 @@ public readonly struct RectCollider<T>
         World = world;
         index = GetIndex();
     }
+
+    public void Remove()
+    {
+        World.Remove(this);
+    }
+
     }
 }
