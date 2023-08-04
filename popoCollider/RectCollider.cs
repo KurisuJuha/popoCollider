@@ -2,7 +2,7 @@
 
 namespace JuhaKurisu.PopoTools.ColliderSystem;
 
-public readonly struct RectCollider<T>
+public readonly struct RectCollider<T> : IEquatable<RectCollider<T>>
 {
     private readonly AABB AABB;
     public readonly T Entity;
@@ -33,9 +33,9 @@ public readonly struct RectCollider<T>
     {
         var aabb = AABB.Rescale(World.WorldTransform);
         var leftTopMortonNumber = GetMortonNumber((ushort)aabb.LeftTopPosition.x,
-            (ushort)aabb.LeftTopPosition.x);
+            (ushort)aabb.LeftTopPosition.y);
         var rightBottomMortonNumber = GetMortonNumber((ushort)aabb.RightBottomPosition.x,
-            (ushort)aabb.RightBottomPosition.x);
+            (ushort)aabb.RightBottomPosition.y);
         var (relatedIndex, areaIndex) = GetRoot(leftTopMortonNumber, rightBottomMortonNumber);
 
         return GetStartIndex(areaIndex) + relatedIndex;
@@ -43,6 +43,7 @@ public readonly struct RectCollider<T>
 
     private uint BitSeparate32(uint n)
     {
+        n = (n | (n << 8)) & 0x00ff00ff;
         n = (n | (n << 4)) & 0x0f0f0f0f;
         n = (n | (n << 2)) & 0x33333333;
         return (n | (n << 1)) & 0x55555555;
@@ -57,8 +58,8 @@ public readonly struct RectCollider<T>
     {
         var shift = 0;
 
-        // 16
-        for (var i = 1; i < 8; i++)
+        // 8
+        for (var i = 1; i < World.WorldTransform.Level; i++)
             if ((a ^ b) >> (i * 2) != 0)
                 shift = i;
 
@@ -68,5 +69,21 @@ public readonly struct RectCollider<T>
     private int GetStartIndex(uint n)
     {
         return ((int)Math.Pow(4, n) - 1) / 3;
+    }
+
+    public bool Equals(RectCollider<T> other)
+    {
+        return AABB.Equals(other.AABB) && EqualityComparer<T>.Default.Equals(Entity, other.Entity) &&
+               Transform.Equals(other.Transform) && World.Equals(other.World) && index == other.index;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is RectCollider<T> other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(AABB, Entity, Transform, World, index);
     }
 }

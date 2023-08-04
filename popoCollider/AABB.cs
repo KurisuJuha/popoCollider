@@ -4,7 +4,7 @@ using JuhaKurisu.PopoTools.Deterministics;
 
 namespace JuhaKurisu.PopoTools.ColliderSystem;
 
-public readonly struct AABB
+public readonly struct AABB : IEquatable<AABB>
 {
     public readonly FixVector2 LeftTopPosition;
     public readonly FixVector2 RightBottomPosition;
@@ -73,9 +73,24 @@ public readonly struct AABB
 
     public AABB Rescale(WorldTransform worldTransform)
     {
-        var defaultSize = new Fix64(8 * 8);
+        var defaultSize = new Fix64(1 << (int)worldTransform.Level);
         var scale = new FixVector2(worldTransform.Size.x / defaultSize, worldTransform.Size.y / defaultSize);
-        return new AABB(LeftTopPosition * scale + worldTransform.Position,
-            RightBottomPosition * scale + worldTransform.Position);
+        return new AABB(LeftTopPosition / scale - worldTransform.LeftBottomPosition,
+            RightBottomPosition / scale - worldTransform.LeftBottomPosition);
+    }
+
+    public bool Equals(AABB other)
+    {
+        return LeftTopPosition.Equals(other.LeftTopPosition) && RightBottomPosition.Equals(other.RightBottomPosition);
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is AABB other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(LeftTopPosition, RightBottomPosition);
     }
 }
