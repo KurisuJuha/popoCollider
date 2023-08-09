@@ -1,6 +1,6 @@
 using JuhaKurisu.PopoTools.Deterministics;
 
-namespace JuhaKurisu.PopoTools.ColliderSystem;
+namespace PopoTools.ColliderSystem;
 
 public class ColliderWorld<T>
 {

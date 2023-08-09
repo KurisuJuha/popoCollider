@@ -1,5 +1,5 @@
-using JuhaKurisu.PopoTools.ColliderSystem;
 using JuhaKurisu.PopoTools.Deterministics;
+using PopoTools.ColliderSystem;
 
 namespace popoColliderTest;
 
