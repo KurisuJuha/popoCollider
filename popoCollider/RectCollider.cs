@@ -92,7 +92,7 @@ public class RectCollider<T>
     public bool IsRight(FixVector2 a, FixVector2 b, FixVector2 point)
     {
         var f = (b.x - a.x) * (point.y - a.y) - (point.x - a.x) * (b.y - a.y);
-        return f > Fix64.zero ? false : true;
+        return f <= Fix64.zero;
     }
 
     private void SetCorners()
