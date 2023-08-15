@@ -1,6 +1,6 @@
-﻿// ReSharper disable InconsistentNaming
+﻿using JuhaKurisu.PopoTools.Deterministics;
 
-using JuhaKurisu.PopoTools.Deterministics;
+// ReSharper disable InconsistentNaming
 
 namespace JuhaKurisu.PopoTools.ColliderSystem;
 
@@ -11,13 +11,13 @@ public readonly struct AABB : IEquatable<AABB>
 
     public AABB(RectColliderTransform transform)
     {
-        var p = transform.Size.x / Fix64.two;
+        var p = transform.Size / Fix64.two;
         var m = -p;
 
-        var pos1 = RotatePoint(new FixVector2(m, m) + transform.Position, transform.Position, transform.Angle);
-        var pos2 = RotatePoint(new FixVector2(m, p) + transform.Position, transform.Position, transform.Angle);
-        var pos3 = RotatePoint(new FixVector2(p, p) + transform.Position, transform.Position, transform.Angle);
-        var pos4 = RotatePoint(new FixVector2(p, m) + transform.Position, transform.Position, transform.Angle);
+        var pos1 = RotatePoint(new FixVector2(m.x, m.y), transform.Angle) + transform.Position;
+        var pos2 = RotatePoint(new FixVector2(m.x, p.y), transform.Angle) + transform.Position;
+        var pos3 = RotatePoint(new FixVector2(p.x, p.y), transform.Angle) + transform.Position;
+        var pos4 = RotatePoint(new FixVector2(p.x, m.y), transform.Angle) + transform.Position;
 
         var leftUpPositionX = transform.Position.x;
         var leftUpPositionY = transform.Position.y;
@@ -26,22 +26,24 @@ public readonly struct AABB : IEquatable<AABB>
 
         // Left Up Position
         if (leftUpPositionX > pos1.x) leftUpPositionX = pos1.x;
-        if (leftUpPositionY < pos1.y) leftUpPositionY = pos1.y;
         if (leftUpPositionX > pos2.x) leftUpPositionX = pos2.x;
-        if (leftUpPositionY < pos2.y) leftUpPositionY = pos2.y;
         if (leftUpPositionX > pos3.x) leftUpPositionX = pos3.x;
-        if (leftUpPositionY < pos3.y) leftUpPositionY = pos3.y;
         if (leftUpPositionX > pos4.x) leftUpPositionX = pos4.x;
+
+        if (leftUpPositionY < pos1.y) leftUpPositionY = pos1.y;
+        if (leftUpPositionY < pos2.y) leftUpPositionY = pos2.y;
+        if (leftUpPositionY < pos3.y) leftUpPositionY = pos3.y;
         if (leftUpPositionY < pos4.y) leftUpPositionY = pos4.y;
 
         // Right Down Position
         if (rightDownPositionX < pos1.x) rightDownPositionX = pos1.x;
-        if (rightDownPositionY > pos1.y) rightDownPositionY = pos1.y;
         if (rightDownPositionX < pos2.x) rightDownPositionX = pos2.x;
-        if (rightDownPositionY > pos2.y) rightDownPositionY = pos2.y;
         if (rightDownPositionX < pos3.x) rightDownPositionX = pos3.x;
-        if (rightDownPositionY > pos3.y) rightDownPositionY = pos3.y;
         if (rightDownPositionX < pos4.x) rightDownPositionX = pos4.x;
+
+        if (rightDownPositionY > pos1.y) rightDownPositionY = pos1.y;
+        if (rightDownPositionY > pos2.y) rightDownPositionY = pos2.y;
+        if (rightDownPositionY > pos3.y) rightDownPositionY = pos3.y;
         if (rightDownPositionY > pos4.y) rightDownPositionY = pos4.y;
 
         LeftTopPosition = new FixVector2(leftUpPositionX, leftUpPositionY);
@@ -54,12 +56,7 @@ public readonly struct AABB : IEquatable<AABB>
         RightBottomPosition = rightBottomPosition;
     }
 
-    private FixVector2 RotatePoint(FixVector2 vec, FixVector2 origin, Fix64 angle)
-    {
-        return RotatePoint(vec - origin, angle) + origin;
-    }
-
-    private FixVector2 RotatePoint(FixVector2 vec, Fix64 angle)
+    public static FixVector2 RotatePoint(FixVector2 vec, Fix64 angle)
     {
         var radAngle = Fix64.deg2Rad * angle;
         var cos = Fix64.Cos(radAngle);
@@ -71,20 +68,21 @@ public readonly struct AABB : IEquatable<AABB>
         );
     }
 
-    public AABB Rescale(WorldTransform worldTransform)
+    public readonly AABB Rescale(WorldTransform worldTransform)
     {
         var defaultSize = new Fix64(1 << (int)worldTransform.Level);
         var scale = new FixVector2(worldTransform.Size.x / defaultSize, worldTransform.Size.y / defaultSize);
-        return new AABB(LeftTopPosition / scale - worldTransform.LeftBottomPosition,
-            RightBottomPosition / scale - worldTransform.LeftBottomPosition);
+        return new AABB((LeftTopPosition - worldTransform.LeftBottomPosition) / scale,
+            (RightBottomPosition - worldTransform.LeftBottomPosition) / scale);
     }
 
     public bool Equals(AABB other)
     {
-        return LeftTopPosition.Equals(other.LeftTopPosition) && RightBottomPosition.Equals(other.RightBottomPosition);
+        return LeftTopPosition.Equals(other.LeftTopPosition) &&
+               RightBottomPosition.Equals(other.RightBottomPosition);
     }
 
-    public override bool Equals(object? obj)
+    public override bool Equals(object obj)
     {
         return obj is AABB other && Equals(other);
     }
@@ -92,5 +90,10 @@ public readonly struct AABB : IEquatable<AABB>
     public override int GetHashCode()
     {
         return HashCode.Combine(LeftTopPosition, RightBottomPosition);
+    }
+
+    public override string ToString()
+    {
+        return $"LT: {LeftTopPosition} RT: {RightBottomPosition}";
     }
 }

@@ -2,11 +2,12 @@
 
 public struct ColliderCell<T> : IEquatable<ColliderCell<T>>
 {
-    public readonly HashSet<RectCollider<T>>? Colliders;
+    public List<RectCollider<T>> Colliders { get; private set; }
+    public bool HasChild;
 
-    public ColliderCell()
+    public void Init()
     {
-        Colliders = new HashSet<RectCollider<T>>();
+        Colliders = new List<RectCollider<T>>();
     }
 
     public bool Equals(ColliderCell<T> other)
@@ -14,7 +15,7 @@ public struct ColliderCell<T> : IEquatable<ColliderCell<T>>
         return Equals(Colliders, other.Colliders);
     }
 
-    public override bool Equals(object? obj)
+    public override bool Equals(object obj)
     {
         return obj is ColliderCell<T> other && Equals(other);
     }

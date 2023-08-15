@@ -1,89 +1,86 @@
-// ReSharper disable InconsistentNaming
+using JuhaKurisu.PopoTools.Deterministics;
 
 namespace JuhaKurisu.PopoTools.ColliderSystem;
 
-public readonly struct RectCollider<T> : IEquatable<RectCollider<T>>
+public class RectCollider<T>
 {
-    private readonly AABB AABB;
-    public readonly T Entity;
-    public readonly RectColliderTransform Transform;
-    private readonly ColliderWorld<T> World;
-    public readonly long index;
+    private readonly ColliderWorld<T> _world;
+    private AABB _aabb;
+    internal int CellIndex;
+    public T Entity;
+    internal int Index;
+    internal RectColliderTransform InternalTransform;
+    internal bool IsRegistered;
 
     public RectCollider(T entity, RectColliderTransform transform, ColliderWorld<T> world)
     {
         Entity = entity;
-        Transform = transform;
-        AABB = new AABB(transform);
-        World = world;
-        index = GetIndex();
+        _world = world;
+        ChangeTransform(transform);
+    }
+
+    public RectColliderTransform Transform
+    {
+        get => InternalTransform;
+        set => ChangeTransform(value);
+    }
+
+    public void ChangeTransform(RectColliderTransform transform)
+    {
+        var isRegistered = IsRegistered;
+
+        // 登録されているなら一度削除
+        if (isRegistered) Remove();
+
+        InternalTransform = transform;
+        _aabb = new AABB(InternalTransform);
+        CellIndex = (int)MortonOrder.GetIndex(_aabb, _world.WorldTransform);
+
+        // もともと登録されていたならもう一度登録しておく
+        if (isRegistered) Register();
     }
 
     public void Remove()
     {
-        World.Remove(this);
+        _world.Remove(this);
     }
 
     public void Register()
     {
-        World.Register(this);
+        _world.Register(this);
     }
 
-    private long GetIndex()
+    public bool Detect(RectCollider<T> otherCollider)
     {
-        var aabb = AABB.Rescale(World.WorldTransform);
-        var leftTopMortonNumber = GetMortonNumber((ushort)aabb.LeftTopPosition.x,
-            (ushort)aabb.LeftTopPosition.y);
-        var rightBottomMortonNumber = GetMortonNumber((ushort)aabb.RightBottomPosition.x,
-            (ushort)aabb.RightBottomPosition.y);
-        var (relatedIndex, areaIndex) = GetRoot(leftTopMortonNumber, rightBottomMortonNumber);
+        if (Detect(otherCollider.InternalTransform.LeftBottomPosition)) return true;
+        if (Detect(otherCollider.InternalTransform.LeftTopPosition)) return true;
+        if (Detect(otherCollider.InternalTransform.RightTopPosition)) return true;
+        if (Detect(otherCollider.InternalTransform.RightBottomPosition)) return true;
 
-        return GetStartIndex(areaIndex) + relatedIndex;
+        if (otherCollider.Detect(InternalTransform.LeftBottomPosition)) return true;
+        if (otherCollider.Detect(InternalTransform.LeftTopPosition)) return true;
+        if (otherCollider.Detect(InternalTransform.RightTopPosition)) return true;
+        if (otherCollider.Detect(InternalTransform.RightBottomPosition)) return true;
+
+        return false;
     }
 
-    private uint BitSeparate32(uint n)
+    private bool Detect(FixVector2 point)
     {
-        n = (n | (n << 8)) & 0x00ff00ff;
-        n = (n | (n << 4)) & 0x0f0f0f0f;
-        n = (n | (n << 2)) & 0x33333333;
-        return (n | (n << 1)) & 0x55555555;
+        return IsRight(InternalTransform.LeftBottomPosition, InternalTransform.LeftTopPosition, point) &&
+               IsRight(InternalTransform.LeftTopPosition, InternalTransform.RightTopPosition, point) &&
+               IsRight(InternalTransform.RightTopPosition, InternalTransform.RightBottomPosition, point) &&
+               IsRight(InternalTransform.RightBottomPosition, InternalTransform.LeftBottomPosition, point);
     }
 
-    private uint GetMortonNumber(ushort x, ushort y)
+    private static bool IsRight(FixVector2 a, FixVector2 b, FixVector2 point)
     {
-        return BitSeparate32(x) | (BitSeparate32(y) << 1);
+        var f = (b.x - a.x) * (point.y - a.y) - (point.x - a.x) * (b.y - a.y);
+        return f <= Fix64.zero;
     }
 
-    private (uint, uint) GetRoot(uint a, uint b)
+    public override string ToString()
     {
-        var shift = 0;
-
-        // 8
-        for (var i = 1; i < World.WorldTransform.Level; i++)
-            if ((a ^ b) >> (i * 2) != 0)
-                shift = i;
-
-        return (a >> ((shift + 1) * 2), (uint)(7 - shift));
-    }
-
-    private int GetStartIndex(uint n)
-    {
-        return ((int)Math.Pow(4, n) - 1) / 3;
-    }
-
-    public bool Equals(RectCollider<T> other)
-    {
-        return AABB.Equals(other.AABB) && EqualityComparer<T>.Default.Equals(Entity, other.Entity) &&
-               Transform.Equals(other.Transform) && World.Equals(other.World) && index == other.index;
-    }
-
-    public override bool Equals(object? obj)
-    {
-        return obj is RectCollider<T> other && Equals(other);
-    }
-
-    public override int GetHashCode()
-    {
-        return HashCode.Combine(AABB, Entity, Transform, World, index);
+        return $"({_aabb} {InternalTransform})";
     }
 }
