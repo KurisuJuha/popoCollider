@@ -16,4 +16,4 @@ jobs:
       - name: build nuget
         run: dotnet pack -c Release
       - name: push nuget
-        run: dotnet nuget push ./popoCollider/bin/Release/popoCollider.3.0.0.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+        run: dotnet nuget push ./popoCollider/bin/Release/popoCollider.4.0.0.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
