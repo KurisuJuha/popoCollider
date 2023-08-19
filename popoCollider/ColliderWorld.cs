@@ -1,3 +1,5 @@
+using PopoTools.ColliderSystem;
+
 namespace JuhaKurisu.PopoTools.ColliderSystem;
 
 public sealed class ColliderWorld<T>

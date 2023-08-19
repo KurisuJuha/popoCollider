@@ -1,4 +1,6 @@
-﻿namespace JuhaKurisu.PopoTools.ColliderSystem;
+﻿using PopoTools.ColliderSystem;
+
+namespace JuhaKurisu.PopoTools.ColliderSystem;
 
 public struct ColliderCell<T> : IEquatable<ColliderCell<T>>
 {
