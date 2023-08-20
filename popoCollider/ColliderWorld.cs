@@ -6,13 +6,13 @@ public sealed class ColliderWorld<T>
 {
     private readonly ColliderCell<T>[] _colliderCells;
     private readonly List<RectCollider<T>> _collisionDetectionTargetColliders;
-    public readonly List<(T, T)> ContactingColliders;
+    public readonly List<(RectCollider<T>, RectCollider<T>)> ContactingColliders;
     public readonly WorldTransform WorldTransform;
 
     public ColliderWorld(WorldTransform transform)
     {
         var length = ((int)Math.Pow(4, transform.Level + 1) - 1) / 3;
-        ContactingColliders = new List<(T, T)>();
+        ContactingColliders = new List<(RectCollider<T>, RectCollider<T>)>();
         _collisionDetectionTargetColliders = new List<RectCollider<T>>();
         _colliderCells = new ColliderCell<T>[length];
         WorldTransform = transform;
@@ -77,7 +77,7 @@ public sealed class ColliderWorld<T>
         collider.IsRegistered = true;
     }
 
-    public List<(T, T)> Check()
+    public List<(RectCollider<T>, RectCollider<T>)> Check()
     {
         ContactingColliders.Clear();
         _collisionDetectionTargetColliders.Clear();
@@ -98,12 +98,12 @@ public sealed class ColliderWorld<T>
         for (var i = 0; i < cell.Colliders.Count; i++)
         for (var j = i + 1; j < cell.Colliders.Count - i; j++)
             if (cell.Colliders[i].Detect(cell.Colliders[j]))
-                ContactingColliders.Add((cell.Colliders[i].Entity, cell.Colliders[j].Entity));
+                ContactingColliders.Add((cell.Colliders[i], cell.Colliders[j]));
         // 全ての親空間のコライダーとの組み合わせを処理する
         for (var i = 0; i < cell.Colliders.Count; i++)
         for (var j = 0; j < _collisionDetectionTargetColliders.Count; j++)
             if (cell.Colliders[i].Detect(_collisionDetectionTargetColliders[j]))
-                ContactingColliders.Add((cell.Colliders[i].Entity, _collisionDetectionTargetColliders[j].Entity));
+                ContactingColliders.Add((cell.Colliders[i], _collisionDetectionTargetColliders[j]));
 
         // 最大レベルなら返す
         if (WorldTransform.Level == level) return;
