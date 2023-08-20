@@ -94,13 +94,11 @@ public sealed class ColliderWorld<T>
 
         // 同じ空間内の全ての組み合わせを処理する
         for (var i = 0; i < cell.Colliders.Count; i++)
+        for (var j = i + 1; j < cell.Colliders.Count - i; j++)
         {
-            if (!cell.Colliders[i].IsActive) continue;
-            for (var j = i + 1; j < cell.Colliders.Count - i; j++)
-            {
-                if (!cell.Colliders[i].Detect(cell.Colliders[j])) continue;
-                ContactingColliders.Add((cell.Colliders[i].Entity, cell.Colliders[j].Entity));
-            }
+            if (!(cell.Colliders[i].IsActive || cell.Colliders[j].IsActive)) continue;
+            if (!cell.Colliders[i].Detect(cell.Colliders[j])) continue;
+            ContactingColliders.Add((cell.Colliders[i].Entity, cell.Colliders[j].Entity));
         }
 
         // 全ての親空間のコライダーとの組み合わせを処理する
