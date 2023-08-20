@@ -1,4 +1,4 @@
-﻿namespace JuhaKurisu.PopoTools.ColliderSystem;
+﻿namespace PopoTools.ColliderSystem;
 
 public static class MortonOrder
 {

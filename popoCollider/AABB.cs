@@ -1,10 +1,8 @@
 ﻿using JuhaKurisu.PopoTools.Deterministics;
 
-// ReSharper disable InconsistentNaming
+namespace PopoTools.ColliderSystem;
 
-namespace JuhaKurisu.PopoTools.ColliderSystem;
-
-public readonly struct AABB : IEquatable<AABB>
+public struct AABB : IEquatable<AABB>
 {
     public readonly FixVector2 LeftTopPosition;
     public readonly FixVector2 RightBottomPosition;

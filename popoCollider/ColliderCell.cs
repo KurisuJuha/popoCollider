@@ -1,6 +1,4 @@
-﻿using PopoTools.ColliderSystem;
-
-namespace JuhaKurisu.PopoTools.ColliderSystem;
+﻿namespace PopoTools.ColliderSystem;
 
 public struct ColliderCell<T> : IEquatable<ColliderCell<T>>
 {

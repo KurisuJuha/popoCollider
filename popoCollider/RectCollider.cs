@@ -1,4 +1,4 @@
-using JuhaKurisu.PopoTools.ColliderSystem;
+using System.Runtime.CompilerServices;
 using JuhaKurisu.PopoTools.Deterministics;
 
 namespace PopoTools.ColliderSystem;
@@ -11,17 +11,20 @@ public class RectCollider<T>
     public T Entity;
     internal int Index;
     internal RectColliderTransform InternalTransform;
+    public bool IsActive;
     internal bool IsRegistered;
 
-    public RectCollider(T entity, RectColliderTransform transform, ColliderWorld<T> world)
+    public RectCollider(T entity, RectColliderTransform transform, ColliderWorld<T> world, bool isActive = false)
     {
         Entity = entity;
         _world = world;
+        IsActive = isActive;
         ChangeTransform(transform);
     }
 
     public RectColliderTransform Transform
     {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get => InternalTransform;
         set => ChangeTransform(value);
     }

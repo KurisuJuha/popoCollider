@@ -1,8 +1,8 @@
 using JuhaKurisu.PopoTools.Deterministics;
 
-namespace JuhaKurisu.PopoTools.ColliderSystem;
+namespace PopoTools.ColliderSystem;
 
-public readonly struct WorldTransform : IEquatable<WorldTransform>
+public struct WorldTransform : IEquatable<WorldTransform>
 {
     public readonly uint Level;
     public readonly FixVector2 LeftTopPosition;
