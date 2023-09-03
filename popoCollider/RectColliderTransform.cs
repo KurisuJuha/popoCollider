@@ -21,10 +21,23 @@ public readonly struct RectColliderTransform : IEquatable<RectColliderTransform>
         var p = Size / Fix64.two;
         var m = -p;
 
-        LeftBottomPosition = AABB.RotatePoint(new FixVector2(m.x, m.y), Angle) + Position;
-        LeftTopPosition = AABB.RotatePoint(new FixVector2(m.x, p.y), Angle) + Position;
-        RightTopPosition = AABB.RotatePoint(new FixVector2(p.x, p.y), Angle) + Position;
-        RightBottomPosition = AABB.RotatePoint(new FixVector2(p.x, m.y), Angle) + Position;
+        LeftBottomPosition = new FixVector2(m.x, m.y);
+        LeftTopPosition = new FixVector2(m.x, p.y);
+        RightTopPosition = new FixVector2(p.x, p.y);
+        RightBottomPosition = new FixVector2(p.x, m.y);
+
+        if (Angle != Fix64.zero)
+        {
+            LeftBottomPosition = AABB.RotatePoint(LeftBottomPosition, Angle);
+            LeftTopPosition = AABB.RotatePoint(LeftTopPosition, Angle);
+            RightTopPosition = AABB.RotatePoint(RightTopPosition, Angle);
+            RightBottomPosition = AABB.RotatePoint(RightBottomPosition, Angle);
+        }
+
+        LeftBottomPosition += Position;
+        LeftTopPosition += Position;
+        RightTopPosition += Position;
+        RightBottomPosition += Position;
     }
 
     public bool Equals(RectColliderTransform other)

@@ -12,10 +12,23 @@ public struct AABB : IEquatable<AABB>
         var p = transform.Size / Fix64.two;
         var m = -p;
 
-        var pos1 = RotatePoint(new FixVector2(m.x, m.y), transform.Angle) + transform.Position;
-        var pos2 = RotatePoint(new FixVector2(m.x, p.y), transform.Angle) + transform.Position;
-        var pos3 = RotatePoint(new FixVector2(p.x, p.y), transform.Angle) + transform.Position;
-        var pos4 = RotatePoint(new FixVector2(p.x, m.y), transform.Angle) + transform.Position;
+        var pos1 = new FixVector2(m.x, m.y);
+        var pos2 = new FixVector2(m.x, p.y);
+        var pos3 = new FixVector2(p.x, p.y);
+        var pos4 = new FixVector2(p.x, m.y);
+
+        if (transform.Angle != Fix64.zero)
+        {
+            pos1 = RotatePoint(pos1, transform.Angle);
+            pos2 = RotatePoint(pos2, transform.Angle);
+            pos3 = RotatePoint(pos3, transform.Angle);
+            pos4 = RotatePoint(pos4, transform.Angle);
+        }
+
+        pos1 += transform.Position;
+        pos2 += transform.Position;
+        pos3 += transform.Position;
+        pos4 += transform.Position;
 
         var leftUpPositionX = transform.Position.x;
         var leftUpPositionY = transform.Position.y;
